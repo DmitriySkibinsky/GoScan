@@ -1,0 +1,81 @@
+name: Build for Linux and Windows
+
+on:
+  push:
+    branches:
+      - main  
+  pull_request:
+    branches:
+      - main  
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest  
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4  
+
+      - name: Set up Go
+        uses: actions/setup-go@v4  
+        with:
+          go-version: '1.23'  
+
+      - name: Build for Linux
+        run: go build -o goscan-linux ./build/goscan  
+
+      - name: Upload Linux binary
+        uses: actions/upload-artifact@v3  
+        with:
+          name: goscan-linux
+          path: goscan-linux
+
+  build-windows:
+    runs-on: windows-latest  
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4  
+
+      - name: Set up Go
+        uses: actions/setup-go@v4  
+        with:
+          go-version: '1.23'  
+
+      - name: Build for Windows
+        run: go build -o goscan-windows.exe ./build/goscan  
+
+      - name: Upload Windows binary
+        uses: actions/upload-artifact@v3  
+        with:
+          name: goscan-windows.exe
+          path: goscan-windows.exe
+
+  publish-release:
+    runs-on: ubuntu-latest
+    needs: [build-linux, build-windows]  
+    steps:
+      - name: Download Linux binary
+        uses: actions/download-artifact@v3
+        with:
+          name: goscan-linux
+          path: dist/linux
+
+      - name: Download Windows binary
+        uses: actions/download-artifact@v3
+        with:
+          name: goscan-windows.exe
+          path: dist/windows
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v1.0.0 
+          name: Release v1.0.0
+          body: |
+            Сборка для Linux и Windows.
+            - **Linux**: `goscan-linux`
+            - **Windows**: `goscan-windows.exe`
+          draft: false
+          prerelease: false
+          files: |
+            dist/linux/goscan-linux
+            dist/windows/goscan-windows.exe
