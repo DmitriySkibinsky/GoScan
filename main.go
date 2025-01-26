@@ -23,9 +23,9 @@ func main() {
 		case "scan":
 			net.ScanNetworkTraffic()
 		case "stats":
-			net.ScanProcessAppUsage()
+			net.ScanProcessNetworkAppUsage()
 		case "fulstats":
-			net.ScanProcessAppUsageFull()
+			net.ScanProcessNetworkUsageAppFull()
 		default:
 			fmt.Println("Неизвестная команда для ключа -m")
 			printUsage()
