@@ -26,6 +26,13 @@ func main() {
 			net.ScanProcessNetworkAppUsage()
 		case "fulstats":
 			net.ScanProcessNetworkUsageAppFull()
+		case "datastats":
+			net.ScanProcessNetworkUsageAppData()
+		case "piddata":
+			net.GetNetworkUsage(6656)
+		case "per":
+			net.DisplayTrafficDiagram()
+
 		default:
 			fmt.Println("Неизвестная команда для ключа -m")
 			printUsage()
