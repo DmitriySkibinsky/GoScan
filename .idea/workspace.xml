@@ -4,14 +4,17 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="edc472cd-ceaf-4265-b7e5-64b326baddba" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/net/diagrams.go" afterDir="false" />
+    <list default="true" id="edc472cd-ceaf-4265-b7e5-64b326baddba" name="Changes" comment="New Func">
+      <change afterPath="$PROJECT_DIR$/disk/apps.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/disk/double.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/disk/temp.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/disk/unused.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/net/devices.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/net/hotspot.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/net/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/net/app.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,6 +87,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="New Func" />
+    <option name="LAST_COMMIT_MESSAGE" value="New Func" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

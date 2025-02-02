@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"scan/disk"
 	"scan/net"
 )
 
@@ -32,7 +33,16 @@ func main() {
 			net.GetNetworkUsage(6656)
 		case "per":
 			net.DisplayTrafficDiagram()
-
+		case "hotspot":
+			net.HotSpotScan()
+		case "dev":
+			net.ScanDevices()
+		case "diskapp":
+			disk.AppSize()
+		case "unused":
+			disk.FindUnusedApps()
+		case "temp":
+			disk.Temp()
 		default:
 			fmt.Println("Неизвестная команда для ключа -m")
 			printUsage()
