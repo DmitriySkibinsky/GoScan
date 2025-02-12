@@ -24,7 +24,7 @@ jobs:
         run: go build -o dist/linux/goscan-linux .
 
       - name: Upload Linux binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: goscan-linux
           path: dist/linux/goscan-linux
@@ -44,7 +44,7 @@ jobs:
         run: go build -o dist/windows/goscan-windows.exe .
 
       - name: Upload Windows binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: goscan-windows
           path: dist/windows/goscan-windows.exe
@@ -54,13 +54,13 @@ jobs:
     needs: [build-linux, build-windows]
     steps:
       - name: Download Linux binary
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: goscan-linux
           path: dist/linux
 
       - name: Download Windows binary
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: goscan-windows
           path: dist/windows
