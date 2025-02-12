@@ -56,7 +56,7 @@ func parseWmicTemperature(output string) string {
 }
 
 // TestDiskSpeed тестирует скорость чтения/записи диска
-func TestDiskSpeed(disk string) (string, error) {
+func testDiskSpeed(disk string) (string, error) {
 	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
 		cmd = exec.Command("cmd", "/C", "chcp 65001 > nul && winsat disk -drive "+disk)
@@ -70,13 +70,13 @@ func TestDiskSpeed(disk string) (string, error) {
 	return string(out), nil
 }
 
-func Metrics() {
-	var disk string
-	if runtime.GOOS == "windows" {
-		disk = "C" // Укажите нужный диск в Windows
-	} else {
-		disk = "/dev/sda" // Укажите нужный диск в Linux/macOS
-	}
+func Metrics(disk string) {
+
+	//if runtime.GOOS == "windows" {
+	//	disk = "C"
+	//} else {
+	//	disk = "/dev/sda"
+	//}
 
 	temp, err := GetDiskTemperature(disk)
 	if err != nil {
@@ -85,7 +85,7 @@ func Metrics() {
 		fmt.Println("Температура диска:", temp)
 	}
 
-	speed, err := TestDiskSpeed(disk)
+	speed, err := testDiskSpeed(disk)
 	if err != nil {
 		fmt.Println("Ошибка тестирования скорости:", err)
 	} else {
