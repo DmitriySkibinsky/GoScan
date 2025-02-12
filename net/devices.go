@@ -2,142 +2,54 @@ package net
 
 import (
 	"fmt"
-	"github.com/google/gopacket"
-	"github.com/google/gopacket/layers"
-	"github.com/google/gopacket/pcap"
+	"golang.org/x/text/encoding/charmap"
+	"golang.org/x/text/transform"
 	"log"
-	"net"
+	"os/exec"
 	"strings"
-	"time"
 )
 
-// Найти Wi-Fi интерфейс
-func getWirelessInterface() (string, error) {
-	interfaces, err := pcap.FindAllDevs()
+func convertToUTF8(input []byte) (string, error) {
+	// Преобразуем из Windows-1251 в UTF-8
+	decoder := charmap.Windows1251.NewDecoder()
+	utf8Bytes, _, err := transform.Bytes(decoder, input)
 	if err != nil {
 		return "", err
 	}
-
-	for _, iface := range interfaces {
-		desc := strings.ToLower(iface.Description)
-		if strings.Contains(desc, "wireless") || strings.Contains(desc, "wi-fi") || strings.Contains(desc, "беспроводная сеть") {
-			return iface.Name, nil
-		}
-	}
-	return "", fmt.Errorf("беспроводной интерфейс не найден")
+	return string(utf8Bytes), nil
 }
 
-// Отправка ARP-запросов
-func sendARPRequests(handle *pcap.Handle, iface net.Interface) error {
-	// Получаем IP-адрес и маску подсети интерфейса
-	addrs, err := iface.Addrs()
+func GetDevicesInNetwork() {
+	// Выполняем команду arp -a
+	cmd := exec.Command("cmd", "/C", "arp -a")
+	output, err := cmd.Output()
 	if err != nil {
-		return err
+		log.Fatal("Ошибка при выполнении команды ARP:", err)
 	}
 
-	var ipnet *net.IPNet
-	for _, addr := range addrs {
-		if ipnet = addr.(*net.IPNet); ipnet.IP.To4() != nil {
-			break
-		}
-	}
-	if ipnet == nil {
-		return fmt.Errorf("не удалось получить IPv4-адрес интерфейса")
-	}
-
-	// Создаем ARP-пакет
-	eth := layers.Ethernet{
-		SrcMAC:       iface.HardwareAddr,
-		DstMAC:       net.HardwareAddr{0xff, 0xff, 0xff, 0xff, 0xff, 0xff}, // Broadcast
-		EthernetType: layers.EthernetTypeARP,
-	}
-	arp := layers.ARP{
-		AddrType:          layers.LinkTypeEthernet,
-		Protocol:          layers.EthernetTypeIPv4,
-		HwAddressSize:     6,
-		ProtAddressSize:   4,
-		Operation:         layers.ARPRequest,
-		SourceHwAddress:   []byte(iface.HardwareAddr),
-		SourceProtAddress: []byte(ipnet.IP.To4()),
-		DstHwAddress:      []byte{0, 0, 0, 0, 0, 0},
-	}
-
-	// Отправляем ARP-запросы на все IP-адреса в подсети
-	buf := gopacket.NewSerializeBuffer()
-	opts := gopacket.SerializeOptions{}
-	for ip := ipnet.IP.Mask(ipnet.Mask); ipnet.Contains(ip); inc(ip) {
-		arp.DstProtAddress = []byte(ip)
-		gopacket.SerializeLayers(buf, opts, &eth, &arp)
-		if err := handle.WritePacketData(buf.Bytes()); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-// Увеличиваем IP-адрес на 1
-func inc(ip net.IP) {
-	for j := len(ip) - 1; j >= 0; j-- {
-		ip[j]++
-		if ip[j] > 0 {
-			break
-		}
-	}
-}
-
-// Конвертация IP-адреса из байтов
-func ipToString(ip []byte) string {
-	return net.IP(ip).String()
-}
-
-// Сканирование сети (ARP-ответы)
-func ScanDevices() {
-	ifaceName, err := getWirelessInterface()
+	// Преобразуем вывод в строку с правильной кодировкой (Windows-1251 -> UTF-8)
+	outputStr, err := convertToUTF8(output)
 	if err != nil {
-		log.Fatalf("Ошибка: %v", err)
-	}
-	fmt.Printf("Имя интерфейса: %s\n", ifaceName)
-
-	handle, err := pcap.OpenLive(ifaceName, 1600, true, pcap.BlockForever)
-	if err != nil {
-		log.Fatalf("Ошибка при открытии интерфейса: %v", err)
-	}
-	defer handle.Close()
-
-	// Получаем информацию о сетевом интерфейсе
-	iface, err := net.InterfaceByName(ifaceName)
-	if err != nil {
-		log.Fatalf("Ошибка при получении информации о интерфейсе: %v", err)
+		log.Fatal("Ошибка при преобразовании кодировки:", err)
 	}
 
-	// Отправляем ARP-запросы
-	if err := sendARPRequests(handle, *iface); err != nil {
-		log.Fatalf("Ошибка при отправке ARP-запросов: %v", err)
-	}
+	// Отладочная информация: выводим сырой вывод команды
+	fmt.Println("Вывод команды arp -a:")
+	fmt.Println(outputStr)
 
-	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
+	// Обрабатываем вывод команды
+	lines := strings.Split(outputStr, "\n")
 
-	fmt.Println("🔍 Сканирование сети (ожидание ARP-ответов)...\n")
-	fmt.Println(" IP-адрес        | MAC-адрес")
-	fmt.Println("-----------------|----------------------")
-
-	// Слушаем ARP-ответы в течение 5 секунд
-	timeout := time.After(5 * time.Second)
-	for {
-		select {
-		case packet := <-packetSource.Packets():
-			arpLayer := packet.Layer(layers.LayerTypeARP)
-			if arpLayer != nil {
-				arpPacket, _ := arpLayer.(*layers.ARP)
-				fmt.Printf(" %-15s | %02X:%02X:%02X:%02X:%02X:%02X\n",
-					ipToString(arpPacket.SourceProtAddress), // Преобразование IP
-					arpPacket.SourceHwAddress[0], arpPacket.SourceHwAddress[1], arpPacket.SourceHwAddress[2],
-					arpPacket.SourceHwAddress[3], arpPacket.SourceHwAddress[4], arpPacket.SourceHwAddress[5])
+	// Проходим по строкам и извлекаем нужные данные
+	for _, line := range lines {
+		// Фильтруем строки с информацией о MAC-адресах
+		if strings.Contains(line, "dynamic") {
+			parts := strings.Fields(line)
+			if len(parts) > 3 {
+				ip := parts[0]  // IP-адрес
+				mac := parts[1] // MAC-адрес
+				fmt.Printf("IP: %s, MAC: %s\n", ip, mac)
 			}
-		case <-timeout:
-			fmt.Println("\nСканирование завершено.")
-			return
 		}
 	}
 }

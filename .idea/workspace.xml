@@ -5,16 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="edc472cd-ceaf-4265-b7e5-64b326baddba" name="Changes" comment="New Func">
-      <change afterPath="$PROJECT_DIR$/disk/apps.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/disk/double.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/disk/temp.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/disk/unused.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/net/devices.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/net/hotspot.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/disk/fs.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/disk/media.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/disk/metrics.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/memory/info.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/memory/livetrack.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/memory/proc.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/net/devices.go" beforeDir="false" afterPath="$PROJECT_DIR$/net/devices.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

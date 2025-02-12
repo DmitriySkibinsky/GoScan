@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"scan/disk"
+	"scan/memory"
 	"scan/net"
 )
 
@@ -36,13 +37,23 @@ func main() {
 		case "hotspot":
 			net.HotSpotScan()
 		case "dev":
-			net.ScanDevices()
+			net.GetDevicesInNetwork()
 		case "diskapp":
 			disk.AppSize()
 		case "unused":
 			disk.FindUnusedApps()
 		case "temp":
 			disk.Temp()
+		case "media":
+			root := "C:\\Users\\dmitr\\Desktop\\University"
+			ext := "png"
+			disk.Media(root, ext)
+		case "disk":
+			disk.Metrics()
+		case "meminfo":
+			memory.InfoFull()
+		case "track":
+			memory.ProcTrack()
 		default:
 			fmt.Println("Неизвестная команда для ключа -m")
 			printUsage()
